@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payment Methods</title>
+</head>
+<body>
+    <h2>Available Payment Methods</h2>
+    <ul>
+        {% for method in payment_methods %}
+            <li>
+                <strong>{{ method.name }}</strong><br>
+                {{ method.description }}
+            </li>
+        {% empty %}
+            <li>No payment methods available</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
