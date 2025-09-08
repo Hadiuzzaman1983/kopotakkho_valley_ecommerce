@@ -19,11 +19,11 @@
                 <nav class="main-menu mobile-menu">
                     <ul>
                         <li><a class="" href="{% url 'home' %}">Home</a></li>
-                        <li><a href="./contact.html">Products</a></li>
+                        <li><a href="{% url 'product-list' %}">Products</a></li>
                         <li><a href="#">Categries</a>
                             <ul class="sub-menu">
                                 {% for category in categories %}
-                                <li><a href="#">{{ category.title|title}}</a></li>
+                                <li><a href="{% url 'category-details' category.slug %}">{{ category.title|title}}</a></li>
                                 {% endfor %}
                             </ul>
                         </li>

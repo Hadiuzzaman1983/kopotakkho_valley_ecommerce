@@ -13,12 +13,13 @@ class Category(models.Model):
 
 class Product(models.Model):
     category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE)
-    title = models.CharField(max_length=100)
-    slug= models.SlugField(unique=True)
+    title = models.CharField(max_length=150)
+    slug= models.SlugField(unique=True,max_length=150)
     featured = models.BooleanField(default=False)
     price = models.DecimalField(decimal_places=2, max_digits=10)
     thumbnail = models.URLField()
     description = models.TextField(null=True, blank=True,default='N/A')
+    in_stock = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -27,6 +28,11 @@ class Product(models.Model):
 
     def __str__(self) -> str:
         return self.title
+
+    @property
+    def related(self):
+        return self.category.products.all().exclude(pk=self.pk)
+
 
 class Slider(models.Model):
     title = models.CharField(max_length=100)
