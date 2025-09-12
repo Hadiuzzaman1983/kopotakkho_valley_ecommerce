@@ -46,5 +46,12 @@ class Cart(object):
     def __len__(self):
         return len(self.cart.keys())
 
+    def clear(self):
+        try:
+            del self.session[self.cart_id]
+        except:
+            pass
+        self.save()
+
 
 
