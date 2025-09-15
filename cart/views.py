@@ -1,5 +1,10 @@
 from django.shortcuts import get_object_or_404, redirect
+from django.utils import timezone
+from django.contrib import messages
 from django.views import generic
+from .models import Coupon
+
+
 from .cart import Cart
 from product.models import Product
 # Create your views here.
@@ -22,14 +27,54 @@ class CartItem(generic.TemplateView):
         cart = Cart(request)
 
         if product_id and quantity:
-            cart.update(int(product_id), int(quantity))
-            return redirect('cart')
+            product = get_object_or_404(Product, id=product_id)
+            if int(quantity) > 0:
+                if product.in_stock:
+                    cart.update(int(product_id), int(quantity))
+                    return redirect('cart')
+                else:
+                    messages.warning(request,'Product is not in stock')
+                    return redirect('cart')
+            else:
+                cart.update(int(product_id), int(quantity))
+                return redirect('cart')
+
+
 
         if clear:
             cart.clear()
             return redirect('cart')
 
         return super().get(request,*args,**kwargs)
+
+
+class AddCoupon(generic.View):
+    def post(self,request,*args,**kwargs):
+        code= request.POST.get('coupon','')
+        coupon = Coupon.objects.filter(code__iexact=code)
+        cart = Cart(self.request)
+
+        if coupon.exists():
+            coupon = coupon.first()
+            current_date = timezone.now()
+            active_date =coupon.active_date
+            expiry_date = coupon.expiry_date
+
+            if current_date > expiry_date:
+                messages.warning(request,'You cannot add a coupon that is expired')
+                return redirect('cart')
+
+            if current_date < active_date:
+                messages.warning(request,'coupon is yet that is active')
+                return redirect('cart')
+
+            cart.add_coupon(coupon.id)
+            messages.warning(request, 'Your coupon has been added successfully')
+            return redirect('cart')
+
+        else:
+            messages.warning(request,'Invalid Coupon code')
+            return redirect('cart')
 
 
 

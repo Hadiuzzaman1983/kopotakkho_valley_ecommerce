@@ -11,7 +11,9 @@
             <div class="row">
                 <div class="col-lg-4">
                     <div class="page-breadcrumb">
+                        {% if cart %}
                         <h2>Cart: {{ cart|length }}</h2>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -20,9 +22,18 @@
     <!-- Page Add Section End -->
 
     <!-- Cart Page Section Begin -->
+{% if cart %}
     <div class="cart-page">
         <div class="container">
             <div class="cart-table">
+                <div class="row py-2">
+                    <div class="com-md-12">
+                        {% if messages %}
+                          {% include '../message.html' %}
+                        {% endif %}
+
+                    </div>
+                </div>
                 <table>
                     <thead>
                         <tr>
@@ -38,7 +49,7 @@
                     {% with product=item.product %}
                         <tr>
                             <td class="product-col">
-                                <img src="{{ product.thumbnail }}" style="width:40px;" alt="">
+                                <img src="{{ product.thumbnail }}" style="width:80px;" alt="">
                                 <div class="p-title">
                                     <h5>{{ product.title }}</h5>
                                 </div>
@@ -68,19 +79,32 @@
             <div class="cart-btn">
                 <div class="row">
                     <div class="col-lg-6">
-                        <div class="coupon-input">
-                            <input type="text" placeholder="Enter cupone code">
-                        </div>
+                        <form action="{% url 'add-coupon' %}" method="POST">
+                            {% csrf_token %}
+                            <div class="coupon-input">
+                                <input name="coupon" type="text" placeholder="Enter cupone code">
+                             </div>
+                        </form>
                     </div>
                     <div class="col-lg-5 offset-lg-1 text-left text-lg-right">
                         <a class="text-decoration-none text-dark" href="?clear=true">
                             <div class="site-btn clear-btn">Clear Cart</div>
+                        </a>
+                        <a class="text-decoration-none text-dark" href="#">
+                            <div class="site-btn clear-btn">Checkout</div>
                         </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+{% else %}
+    <div class="cart-page">
+        <div class="container">
+            {% include 'no-cart.html' %}
+        </div>
+    </div>
+{% endif %}
     <!-- Cart Page Section End -->
 
 
