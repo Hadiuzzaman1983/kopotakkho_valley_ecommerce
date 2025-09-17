@@ -40,7 +40,7 @@
                             <th class="product-h">Product</th>
                             <th>Price</th>
                             <th class="quan">Quantity</th>
-                            <th>Total</th>
+                            <th>Subtotal</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -49,7 +49,7 @@
                     {% with product=item.product %}
                         <tr>
                             <td class="product-col">
-                                <img src="{{ product.thumbnail }}" style="width:80px;" alt="">
+                                <img style="height:80px" src="{{ product.thumbnail }}"  alt="">
                                 <div class="p-title">
                                     <h5>{{ product.title }}</h5>
                                 </div>
@@ -75,6 +75,9 @@
                     {% endfor %}
                     </tbody>
                 </table>
+                <h4 class="text-center">
+                    <strong>Total= </strong>Tk {{cart.total}}
+                </h4>
             </div>
             <div class="cart-btn">
                 <div class="row">

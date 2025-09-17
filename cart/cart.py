@@ -1,5 +1,6 @@
 from django.conf import settings
 from product.models import Product
+from .models import Coupon
 
 class Cart(object):
     def __init__(self, request) ->None:
@@ -55,9 +56,19 @@ class Cart(object):
     def clear(self):
         try:
             del self.session[self.cart_id]
+            del self.session[self.coupon_id]
         except:
             pass
         self.save()
+    def total(self):
+        amount = sum (product['subtotal'] for product in self.cart.values())
+
+        if self.coupon:
+            coupon = Coupon.objects.get(id=self.coupon)
+            amount = amount * (coupon.discount / 100)
+
+        return amount
+
 
 
 

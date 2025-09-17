@@ -1,8 +1,9 @@
+from datetime import datetime
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
 from django.contrib import messages
 from django.views import generic
-from .models import Coupon
+from .models import *
 
 
 from .cart import Cart
@@ -49,31 +50,37 @@ class CartItem(generic.TemplateView):
 
 
 class AddCoupon(generic.View):
-    def post(self,request,*args,**kwargs):
-        code= request.POST.get('coupon','')
-        coupon = Coupon.objects.filter(code__iexact=code)
+    def post(self,*args,**kwargs):
+        code= self.request.POST.get('coupon','')
+        coupon = Coupon.objects.filter(code__iexact=code,active=True)
         cart = Cart(self.request)
+
 
         if coupon.exists():
             coupon = coupon.first()
-            current_date = timezone.now()
-            active_date =coupon.active_date
-            expiry_date = coupon.expiry_date
+            current_date = datetime.date(timezone.now())
+            active_date = coupon.active_date
+            expire_date = coupon.expire_date
 
-            if current_date > expiry_date:
-                messages.warning(request,'You cannot add a coupon that is expired')
+            if current_date > expire_date:
+                messages.warning(self.request,'You cannot add a coupon that is expired')
                 return redirect('cart')
 
             if current_date < active_date:
-                messages.warning(request,'coupon is yet that is active')
+                messages.warning(self.request,'coupon is yet that is active')
                 return redirect('cart')
 
+            if cart.total() < coupon.discount_coupon_amount :
+                messages.warning(self.request, f"You have to shop at least { coupon.discount_coupon_amount } to use this coupon code")
+                return redirect('cart')
+
+
             cart.add_coupon(coupon.id)
-            messages.warning(request, 'Your coupon has been added successfully')
+            messages.success(self.request, 'Your coupon has been added successfully')
             return redirect('cart')
 
         else:
-            messages.warning(request,'Invalid Coupon code')
+            messages.warning(self.request,'Invalid Coupon code')
             return redirect('cart')
 
 
