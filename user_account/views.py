@@ -23,7 +23,6 @@ from .mixins import (
 )
 
 
-
 @method_decorator(never_cache, name='dispatch')
 class Login(LogoutRequiredMixin, generic.View):
     def get(self, *args, **kwargs):
@@ -31,7 +30,7 @@ class Login(LogoutRequiredMixin, generic.View):
         context = {
             "form": form
         }
-        return render(self.request, 'user_account/login.html', context)
+        return render(self.request, 'account/login.html', context)
 
     def post(self, *args, **kwargs):
         form = LoginForm(self.request.POST)
@@ -50,7 +49,7 @@ class Login(LogoutRequiredMixin, generic.View):
                 messages.warning(self.request, "Wrong credentials")
                 return redirect('login')
 
-        return render(self.request, 'user_account/login.html', {"form": form})
+        return render(self.request, 'account/login.html', {"form": form})
 
 
 class Logout(generic.View):
@@ -61,7 +60,7 @@ class Logout(generic.View):
 
 @method_decorator(never_cache, name='dispatch')
 class Registration(LogoutRequiredMixin, generic.CreateView):
-    template_name = 'user_account/registration.html'
+    template_name = 'account/registration.html'
     form_class = UserRegistrationForm
     success_url = reverse_lazy('login')
 
@@ -72,7 +71,7 @@ class Registration(LogoutRequiredMixin, generic.CreateView):
 
 @method_decorator(never_cache, name='dispatch')
 class ChangePassword(LoginRequiredMixin, generic.FormView):
-    template_name = 'user_account/change_password.html'
+    template_name = 'account/change_password.html'
     form_class = ChangePasswordForm
     login_url = reverse_lazy('login')
     success_url = reverse_lazy('login')
@@ -91,12 +90,12 @@ class ChangePassword(LoginRequiredMixin, generic.FormView):
 
 
 class SendEmailToResetPassword(PasswordResetView):
-    template_name = 'user_account/password_reset.html'
+    template_name = 'account/password_reset.html'
     form_class = SendEmailForm
 
 
 class ResetPasswordConfirm(PasswordResetConfirmView):
-    template_name = 'user_account/password_reset_confirm.html'
+    template_name = 'account/password_reset_confirm.html'
     form_class = ResetPasswordConfirmForm
     success_url = reverse_lazy('login')
 

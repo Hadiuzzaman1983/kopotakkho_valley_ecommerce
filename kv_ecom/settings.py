@@ -143,3 +143,7 @@ SESSION_COOKIE_AGE = 86400
 CART_ID = 'cart'
 
 COUPON_ID = 'coupon'
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'login'
